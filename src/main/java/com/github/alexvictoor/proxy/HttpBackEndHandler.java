@@ -17,7 +17,7 @@ public class HttpBackEndHandler extends SimpleChannelInboundHandler<Object> {
     private final Channel inboundChannel;
 
     public HttpBackEndHandler(Channel inboundChannel) {
-        super(false);
+        super(false); // do not release messages
         this.inboundChannel = inboundChannel;
     }
 
