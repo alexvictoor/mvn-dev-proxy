@@ -3,6 +3,7 @@ package com.github.alexvictoor.proxy;
 import com.github.alexvictoor.rule.SocketRule;
 import com.github.alexvictoor.rule.Sockets;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import io.netty.handler.codec.http.HttpHeaders;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -13,6 +14,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class HttpProxyServerTest {
@@ -48,7 +50,7 @@ public class HttpProxyServerTest {
                         get(urlEqualTo("/"))
                                 .willReturn(
                                         aResponse()
-                                                .withHeader("Content-Type", TYPE)
+                                                .withHeader(CONTENT_TYPE, TYPE)
                                                 .withBody(CONTENT)
                                 )
                 );
