@@ -20,7 +20,7 @@ public class SocketRule implements TestRule {
     public int findFreePort() {
         do {
             lastPort++;
-        } while (!Sockets.isPortAvailableUsingNetstat(lastPort));
+        } while (!Sockets.isPortAvailable(lastPort));
         providedPorts.put(lastPort, new Exception());
 
         return lastPort;
@@ -29,13 +29,13 @@ public class SocketRule implements TestRule {
     public boolean checkProvidedPorts() {
         boolean result = true;
         for (Integer port : providedPorts.keySet()) {
-            if (Sockets.isPortAvailableUsingNetstat(port)) {
+            if (Sockets.isPortAvailable(port)) {
                 logger.debug("Port {} is available", port);
             } else {
                 logger.error("Port " + port + " has not been released properly, it has been used first at:",
                         providedPorts.get(port));
             }
-            result = result && Sockets.isPortAvailableUsingNetstat(port);
+            result = result && Sockets.isPortAvailable(port);
         }
         return result;
     }

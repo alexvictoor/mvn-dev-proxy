@@ -57,37 +57,4 @@ public class SocketsTest {
         assertThat(available).isFalse();
     }
 
-
-    @Test
-    public void should_consider_port_available_using_netstat() throws IOException {
-        // given
-        int port = serverSocket.getLocalPort();
-        serverSocket.close();
-        // when
-        boolean available = Sockets.isPortAvailableUsingNetstat(port);
-        // then
-        assertThat(available).isTrue();
-    }
-
-    @Test
-    public void should_consider_port_not_available_using_netstat() throws IOException {
-        // given
-        int port = serverSocket.getLocalPort();
-        // when
-        boolean available = Sockets.isPortAvailableUsingNetstat(port);
-        // then
-        assertThat(available).isFalse();
-    }
-
-    @Test
-    public void should_consider_port_unavailable_after_connection_timeout_using_netstat() throws IOException {
-        // given
-        int port = serverSocket.getLocalPort();
-        new Socket("localhost", port);
-        // when
-        boolean available = Sockets.isPortAvailableUsingNetstat(port);
-        // then
-        assertThat(available).isFalse();
-    }
-
 }

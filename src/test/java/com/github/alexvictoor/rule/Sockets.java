@@ -38,28 +38,4 @@ public class Sockets {
         return result;
     }
 
-    public static boolean isPortAvailableUsingNetstat(int port) {
-        boolean result = true;
-        ProcessBuilder builder = new ProcessBuilder("netstat", "-an");
-        builder.redirectErrorStream(true);
-        try {
-            Process process = builder.start();
-            InputStream stream = process.getInputStream();
-            InputStreamReader reader = new InputStreamReader(stream);
-            List<String> lines = CharStreams.readLines(reader);
-            String portToken = ":" + port+" ";
-            for (int i = 0; i < lines.size(); i++) {
-                String line = lines.get(i);
-                if (line.contains(portToken) && line.contains("LISTENING")) {
-                    logger.info("Port not available according to netstat: {}", line);
-                    result = false;
-                    break;
-                }
-            }
-        } catch (IOException e) {
-            logger.error("Error while executing netstat", e);
-        }
-        return result;
-    }
-
 }
