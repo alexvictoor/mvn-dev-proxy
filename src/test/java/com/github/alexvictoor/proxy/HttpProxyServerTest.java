@@ -1,5 +1,7 @@
 package com.github.alexvictoor.proxy;
 
+import com.github.alexvictoor.rule.SocketRule;
+import com.github.alexvictoor.rule.Sockets;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.junit.After;
 import org.junit.Before;
@@ -19,12 +21,17 @@ public class HttpProxyServerTest {
     public static final String CONTENT = "Hello!";
 
     @Rule
-    public WireMockRule targetServer = new WireMockRule();
+    public SocketRule socketRule = new SocketRule();
+    @Rule
+    public WireMockRule targetServer = new WireMockRule(new SocketRule().findFreePort());
+
     private HttpProxyServer proxyServer;
+    private int proxyPort;
 
     @Before
     public void setUp() throws Exception {
-        proxyServer = new HttpProxyServer("localhost", 8080, 8081);
+        proxyPort = socketRule.findFreePort();
+        proxyServer = new HttpProxyServer("localhost", targetServer.port(), proxyPort);
         proxyServer.start();
     }
 
@@ -46,7 +53,7 @@ public class HttpProxyServerTest {
                                 )
                 );
         // when
-        URLConnection urlConnection = new URL("http://localhost:8081").openConnection();
+        URLConnection urlConnection = new URL("http://localhost:" + proxyPort).openConnection();
         // then
         assertThat(urlConnection.getContentType()).isEqualTo(TYPE);
         assertThat(urlConnection.getContentLength()).isEqualTo(CONTENT.length());
