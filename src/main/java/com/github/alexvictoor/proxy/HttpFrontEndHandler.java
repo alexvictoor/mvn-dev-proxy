@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.List;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.*;
 import static io.netty.handler.codec.http.HttpMethod.GET;
@@ -30,23 +31,28 @@ public class HttpFrontEndHandler extends SimpleChannelInboundHandler<FullHttpReq
 
     private final String host;
     private final int port;
+    private final List<FileSystemRoute> routes;
     private ChannelFuture channelFuture;
 
-    public HttpFrontEndHandler(String host, int port) {
+    public HttpFrontEndHandler(String host, int port, List<FileSystemRoute> routes) {
         this.host = host;
         this.port = port;
+        this.routes = routes;
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, final FullHttpRequest msg) throws Exception {
         final String uri = msg.getUri();
         logger.debug("REQ URI {}", uri);
-        if (uri.contains("webjar")) {
-            handleFileRequest(ctx, msg);
-        } else {
-            handleProxyRequest(ctx, msg);
+        for (FileSystemRoute route : routes) {
+            File file = route.findFile(uri);
+            if (file != null) {
+                handleFileRequest(ctx, msg, file);
+                return;
+            }
         }
 
+        handleProxyRequest(ctx, msg);
     }
 
     private void handleProxyRequest(final ChannelHandlerContext ctx, final FullHttpRequest msg) {
@@ -98,14 +104,11 @@ public class HttpFrontEndHandler extends SimpleChannelInboundHandler<FullHttpReq
         });
     }
 
-    private void handleFileRequest(ChannelHandlerContext ctx, FullHttpRequest msg) throws IOException {
+    private void handleFileRequest(ChannelHandlerContext ctx, FullHttpRequest msg, File file) throws IOException {
         if (msg.getMethod() != GET) {
             sendError(ctx, METHOD_NOT_ALLOWED);
             return;
         }
-
-        String path = getClass().getResource("/dummy.html").getFile();
-        File file = new File(path);
 
         RandomAccessFile raf;
         try {

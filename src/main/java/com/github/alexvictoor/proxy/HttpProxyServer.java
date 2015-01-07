@@ -1,7 +1,6 @@
 package com.github.alexvictoor.proxy;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -10,6 +9,9 @@ import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.List;
+
 
 public final class HttpProxyServer {
 
@@ -17,13 +19,15 @@ public final class HttpProxyServer {
     private final String targetHost;
     private final int targetPort;
     private final int proxyPort;
+    private final List<FileSystemRoute> routes;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
 
-    public HttpProxyServer(String targetHost, int targetPort, int proxyPort) {
+    public HttpProxyServer(String targetHost, int targetPort, int proxyPort, List<FileSystemRoute> routes) {
         this.targetHost = targetHost;
         this.targetPort = targetPort;
         this.proxyPort = proxyPort;
+        this.routes = routes;
     }
 
     public void start() {
@@ -36,7 +40,7 @@ public final class HttpProxyServer {
         b.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
                 .handler(new LoggingHandler(LogLevel.INFO))
-                .childHandler(new HttpProxyServerInitializer(targetHost, targetPort));
+                .childHandler(new HttpProxyServerInitializer(targetHost, targetPort, routes));
         try {
             b.bind(proxyPort).sync().channel();
         } catch (InterruptedException e) {
@@ -51,7 +55,8 @@ public final class HttpProxyServer {
     }
 
     public static void main(String[] args) throws Exception {
-        new HttpProxyServer(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2])).start();
+        List<FileSystemRoute> routes = Arrays.asList(FileSystemRoute.create("/static", "target/classes"));
+        new HttpProxyServer(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2]), routes).start();
         System.in.read();
     }
 }

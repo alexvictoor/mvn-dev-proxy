@@ -12,6 +12,10 @@ import org.junit.Test;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
@@ -33,7 +37,8 @@ public class HttpProxyServerTest {
     @Before
     public void setUp() throws Exception {
         proxyPort = socketRule.findFreePort();
-        proxyServer = new HttpProxyServer("localhost", targetServer.port(), proxyPort);
+        List<FileSystemRoute> routes = Arrays.asList(FileSystemRoute.create("/static", "target/classes"));
+        proxyServer = new HttpProxyServer("localhost", targetServer.port(), proxyPort, routes);
         proxyServer.start();
     }
 
@@ -59,6 +64,26 @@ public class HttpProxyServerTest {
         // then
         assertThat(urlConnection.getContentType()).isEqualTo(TYPE);
         assertThat(urlConnection.getContentLength()).isEqualTo(CONTENT.length());
+
+    }
+
+    @Test
+    public void should_act_as_a_file_server() throws IOException {
+        // given
+        targetServer
+                .stubFor(
+                        get(urlEqualTo("/"))
+                                .willReturn(
+                                        aResponse()
+                                                .withHeader(CONTENT_TYPE, TYPE)
+                                                .withBody(CONTENT)
+                                )
+                );
+        // when
+        URLConnection urlConnection = new URL("http://localhost:" + proxyPort + "/static/dummy.html").openConnection();
+        // then
+        assertThat(urlConnection.getContentType()).isEqualTo(TYPE);
+        assertThat(urlConnection.getContentLength()).isNotEqualTo(CONTENT.length());
 
     }
 
