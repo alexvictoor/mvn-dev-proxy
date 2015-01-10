@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.alexvictoor</groupId>
     <artifactId>mvn-dev-proxy</artifactId>
-    <packaging>jar</packaging>
-    <version>0.1</version>
+    <packaging>maven-plugin</packaging>
+    <version>0.1-SNAPSHOT</version>
     <name>mvn-dev-proxy</name>
     <url>https://github.com/alexvictoor/mvn-dev-proxy</url>
     <description>A reverse proxy maven plugin made to ease the life ow web developers</description>
@@ -55,6 +55,11 @@
     </properties>
     <dependencies>
         <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>3.2.5</version>
+        </dependency>
+        <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-transport</artifactId>
             <version>${netty.version}</version>
@@ -73,6 +78,11 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
         </dependency>
 
         <dependency>

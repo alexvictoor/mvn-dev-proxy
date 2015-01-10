@@ -53,10 +53,4 @@ public final class HttpProxyServer {
         bossGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
     }
-
-    public static void main(String[] args) throws Exception {
-        List<FileSystemRoute> routes = Arrays.asList(FileSystemRoute.create("/static", "target/classes"));
-        new HttpProxyServer(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2]), routes).start();
-        System.in.read();
-    }
 }
