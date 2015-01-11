@@ -1,7 +1,5 @@
 package com.github.alexvictoor.proxy;
 
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
