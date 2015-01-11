@@ -42,7 +42,7 @@ public class HttpFrontEndHandler extends SimpleChannelInboundHandler<FullHttpReq
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, final FullHttpRequest msg) throws Exception {
-        final String uri = msg.getUri();
+        final String uri = msg.getUri().substring(1); // remove first '/'
         logger.debug("REQ URI {}", uri);
         for (FileSystemRoute route : routes) {
             File file = route.findFile(uri);

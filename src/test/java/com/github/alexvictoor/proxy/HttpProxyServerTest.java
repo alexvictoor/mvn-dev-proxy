@@ -1,20 +1,19 @@
 package com.github.alexvictoor.proxy;
 
 import com.github.alexvictoor.rule.SocketRule;
-import com.github.alexvictoor.rule.Sockets;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import io.netty.handler.codec.http.HttpHeaders;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
@@ -37,7 +36,7 @@ public class HttpProxyServerTest {
     @Before
     public void setUp() throws Exception {
         proxyPort = socketRule.findFreePort();
-        List<FileSystemRoute> routes = Arrays.asList(FileSystemRoute.create("/static", "target/classes"));
+        List<FileSystemRoute> routes = Arrays.asList(FileSystemRoute.create("static", "target/test-classes"));
         proxyServer = new HttpProxyServer("localhost", targetServer.port(), proxyPort, routes);
         proxyServer.start();
     }
@@ -81,10 +80,22 @@ public class HttpProxyServerTest {
                 );
         // when
         URLConnection urlConnection = new URL("http://localhost:" + proxyPort + "/static/dummy.html").openConnection();
+        String content = getContent(urlConnection);
         // then
-        //assertThat(urlConnection.getContentType()).isEqualTo(TYPE);
-        assertThat(urlConnection.getContentLength()).isNotEqualTo(CONTENT.length());
+        assertThat(content).contains("Hello World!");
+        assertThat(urlConnection.getContentType()).contains(TYPE);
+    }
 
+    private static String getContent(URLConnection connection) throws IOException {
+        StringBuilder content = new StringBuilder();
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String line;
+        while ((line = bufferedReader.readLine()) != null)
+        {
+            content.append(line + "\n");
+        }
+        bufferedReader.close();
+        return content.toString();
     }
 
 

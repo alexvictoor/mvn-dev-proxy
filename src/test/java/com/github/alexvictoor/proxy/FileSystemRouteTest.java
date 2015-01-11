@@ -44,4 +44,24 @@ public class FileSystemRouteTest {
         assertThat(file).isNull();
     }
 
+    @Test
+    public void should_parse_route_data() {
+        // given
+        String input ="webjar|.";
+        // when
+        FileSystemRoute route = FileSystemRoute.parse(input);
+        // then
+        assertThat(route).isNotNull();
+    }
+    @Test
+    public void should_parse_route_data_ignoring_whitespaces() {
+        // given
+        String input ="webjar |  .";
+        FileSystemRoute routeWithoutSpace = FileSystemRoute.parse("webjar|.");
+        // when
+        FileSystemRoute route = FileSystemRoute.parse(input);
+        // then
+        assertThat(route).isNotNull();
+        assertThat(route).isEqualToComparingFieldByField(routeWithoutSpace);
+    }
 }

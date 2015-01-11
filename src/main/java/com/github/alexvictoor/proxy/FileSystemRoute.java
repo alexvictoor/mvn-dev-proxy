@@ -20,6 +20,11 @@ public class FileSystemRoute {
         return new FileSystemRoute(uriPrefix, directory);
     }
 
+    public static FileSystemRoute parse(String input) {
+        String[] tokens = input.split("\\|");
+        return create(tokens[0], tokens[1]);
+    }
+
     public File findFile(String uri) {
         if (uri ==null || !uri.startsWith(uriPrefix)) {
             return null;

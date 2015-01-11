@@ -39,10 +39,7 @@ public class ProxyMojo extends AbstractMojo {
         List<FileSystemRoute> fsRoutes = new ArrayList<>();
         if (routes != null) {
             for (String route : routes) {
-                String[] tokens = route.split("|");
-                String uriPrefix = tokens[0];
-                String path = tokens[1];
-                fsRoutes.add(FileSystemRoute.create(uriPrefix, path));
+                fsRoutes.add(FileSystemRoute.parse(route));
             }
         }
         HttpProxyServer proxyServer = new HttpProxyServer(targetHost, targetPort, proxyPort, fsRoutes);
