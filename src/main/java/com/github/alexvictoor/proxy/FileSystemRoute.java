@@ -22,7 +22,9 @@ public class FileSystemRoute {
 
     public static FileSystemRoute parse(String input) {
         String[] tokens = input.split("\\|");
-        return create(tokens[0], tokens[1]);
+        String prefix = tokens[0].trim();
+        String path = tokens[1].trim();
+        return create(prefix, path);
     }
 
     public File findFile(String uri) {
