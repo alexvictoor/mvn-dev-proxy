@@ -4,8 +4,8 @@ import java.io.File;
 
 public class FileSystemRoute {
 
-    private final String uriPrefix;
-    private final File directory;
+    public final String uriPrefix;
+    public final File directory;
 
     private FileSystemRoute(String uriPrefix, File directory) {
         this.uriPrefix = uriPrefix;

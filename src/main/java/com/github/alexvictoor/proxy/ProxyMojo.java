@@ -4,6 +4,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +43,22 @@ public class ProxyMojo extends AbstractMojo {
         }
         HttpProxyServer proxyServer = new HttpProxyServer(targetHost, targetPort, proxyPort, fsRoutes);
         proxyServer.start();
+
+
+        List<File> watchedFolders = new ArrayList<>();
+        for (FileSystemRoute route : fsRoutes) {
+            watchedFolders.add(route.directory);
+        }
+        LivereloadServer livereloadServer = new LivereloadServer(watchedFolders);
+        if (!watchedFolders.isEmpty()) {
+            livereloadServer.start();
+        }
+
         try {
             System.in.read();
         } catch (IOException e) {
             proxyServer.stop();
+            livereloadServer.stop();
         }
     }
 }
