@@ -3,6 +3,8 @@ package com.github.alexvictoor.proxy;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +17,8 @@ import java.util.List;
  * @requiresProject false
  */
 public class ProxyMojo extends AbstractMojo {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProxyMojo.class);
 
     /**
      * @parameter
@@ -32,6 +36,10 @@ public class ProxyMojo extends AbstractMojo {
      * @parameter default-value="8081"
      */
     private int proxyPort;
+    /**
+     * @parameter default-value=true
+     */
+    private boolean livereload;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -49,16 +57,21 @@ public class ProxyMojo extends AbstractMojo {
         for (FileSystemRoute route : fsRoutes) {
             watchedFolders.add(route.directory);
         }
-        LivereloadServer livereloadServer = new LivereloadServer(watchedFolders);
-        if (!watchedFolders.isEmpty()) {
+        LivereloadServer livereloadServer = null;
+        if (livereload && !watchedFolders.isEmpty()) {
+            livereloadServer = new LivereloadServer(watchedFolders);
             livereloadServer.start();
         }
+
+        logger.info("Press a key to shutdown server");
 
         try {
             System.in.read();
         } catch (IOException e) {
             proxyServer.stop();
-            livereloadServer.stop();
+            if (livereloadServer != null) {
+                livereloadServer.stop();
+            }
         }
     }
 }

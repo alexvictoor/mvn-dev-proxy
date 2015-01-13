@@ -6,7 +6,6 @@ import com.github.alexvictoor.livereload.FileSystemWatcher;
 import com.github.alexvictoor.livereload.WebSocketServerInitializer;
 import com.google.common.base.Throwables;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
