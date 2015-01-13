@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.alexvictoor</groupId>
     <artifactId>mvn-dev-proxy</artifactId>
@@ -14,7 +13,8 @@
         <url>https://github.com/alexvictoor/mvn-dev-proxy</url>
         <connection>scm:git:git@github.com:alexvictoor/mvn-dev-proxy.git</connection>
         <developerConnection>scm:git:git@github.com:alexvictoor/mvn-dev-proxy.git</developerConnection>
-    </scm>
+      <tag>mvn-dev-proxy-0.1</tag>
+  </scm>
 
     <licenses>
         <license>
@@ -168,6 +168,9 @@
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
+                                <configuration>
+                                    <additionalparam>-Xdoclint:none</additionalparam>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
